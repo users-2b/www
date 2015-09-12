@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#====================== configuration start ====================
+site=$( cat /APP )
+#====================== configuration end ======================
+
+[ ! -z $1 ] && site=$1
+
+DATE=`date`
+ROOT="/home/www"
+LOG="$ROOT/log/startapp.log"
+GITHUB="https://github.com/prod-2bees/${site}.git"
+app="$ROOT/$site"
+
+export NVM_DIR="$ROOT/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+
+NODEV=$(cat $ROOT/.nvmrc | awk -F- '{ print $2 }')
+NODE=""
+NODE=$(node -v)
+echo "$DATE : checking node ..." > $LOG
+  [[ $NODE != $NODEV ]] && $ROOT/bin/install-nvm >> $LOG 2>&1
+
+PID=""
+PID=$(ps -ef |grep $app | awk '{ print $2 }')
+  echo "$DATE : Found inactive $app. Starting ..." >> $LOG
+    [[ "$PID" == "" ]] && ( cd $app;./startme ) >> $LOG 2>&1 &
+
+echo "$DATE : Missing $app. Cloning ..." >> $LOG
+  [[ ! -d "$app" ]] && ( git clone $GITHUB $ROOT/$site ) >> $LOG 2>&1
+
+NEWAPP=""
+  echo "$DATE : checking for updates ..." >> $LOG
+  [[ -d $"app" ]] && ( NEWAPP=$(cd $app;git pull | grep "up-to-date") )
+  [[ -z "$NEWAPP" ]] && ( cd $app;nvm use;./startme ) >> $LOG  2>&1 &
+

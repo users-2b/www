@@ -1,0 +1,1 @@
+* * * * *       [ -x /home/www/bin/runme ] && ( cd /home/www;./bin/runme ) > /home/www/log/cron.log 2>&1 &

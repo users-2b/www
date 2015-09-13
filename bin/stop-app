@@ -1,15 +1,14 @@
 #!/bin/bash
 
 #====================== configuration start ====================
-site=$( cat /APP )
+app=$( grep APP /APP | awk -F= '{ print $2 }' )
 #====================== configuration end ======================
 
 [ ! -z $1 ] && site=$1
 
 DATE=`date`
 ROOT=/home/www
-app="$ROOT/$site"
 LOG="$ROOT/log/stopapp.log"
 
-( cd $app;./stopme ) > $LOG 2>&1 &
+( cd $ROOT/$app;./stopme ) > $LOG 2>&1 &
 

@@ -1,14 +1,11 @@
 #!/bin/bash
 
 app=$( grep APP /APP | awk -F= '{ print $2 }' )
-site=$( grep SITE /APP | awk -F= '{ print $2 }' )
-
-[ ! -z $1 ] && site=$1
+GITHUB=$( grep SITE /APP | awk -F= '{ print $2 }' )
 
 DATE=`date`
 ROOT="/home/www"
 LOG="$ROOT/log/startapp.log"
-GITHUB="$site"
 
 export NVM_DIR="$ROOT/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm

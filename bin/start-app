@@ -23,19 +23,14 @@ echo "$DATE : checking node ..." > $LOG
 
 PID=""
 PID=$(ps -ef |grep $app | awk '{ print $2 }')
-echo "$DATE : Found inactive $app. Starting ..." >> $LOG
-    [[ "$PID" == "" ]] && ( cd $app;./startme ) >> $LOG 2>&1 &
+  [[ "$PID" == "" ]] && echo "$DATE : Found inactive $app. Starting ..." >> $LOG
+  [[ "$PID" == "" ]] && ( cd $app;./startme ) >> $LOG 2>&1 &
 
-echo "$DATE : Missing $app. Cloning ..." >> $LOG
-  [[ ! -d "$app" ]] && ( git clone $GITHUB $ROOT/$site ) >> $LOG 2>&1
+  [ ! -d "$app" ] && echo "$DATE : Missing $app. Cloning ..." >> $LOG
+  [ ! -d "$app" ] && ( git clone $GITHUB $ROOT/$site ) >> $LOG 2>&1
 
 NEWAPP=""
-echo "$DATE : checking for runme updates ..." >> $LOG
-  ( NEWAPP=$(cd /runme;git pull | grep "up-to-date") ) >> $LOG  2>&1
-    [[ -z "$NEWAPP" ]] && ( cd /runme;./runme ) >> $LOG  2>&1 &
-
 echo "$DATE : checking for updates ..." >> $LOG
-  HTMLAPP=$(cd $$ROOT/html;git pull | grep "up-to-date") >> $LOG 2>&1 &
-  [[ -d $"app" ]] && ( NEWAPP=$(cd $app;git pull | grep "up-to-date") ) >> $LOG  2>&1
-  [[ -z "$NEWAPP" ]] && ( cd $app;nvm use;./startme ) >> $LOG  2>&1 &
+  [ -d $"app" ] && ( NEWAPP=$(cd $app;git pull | grep "up-to-date") ) >> $LOG  2>&1
+  [[ "$NEWAPP" == "" ]] && ( cd $app;nvm use;./startme ) >> $LOG  2>&1 &
 

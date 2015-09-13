@@ -2,6 +2,4 @@
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-nvm use
-
-[ ! -d $HOME/.meteor ] && (  echo "installing meteor";sh /get-meteor; $HOME/bin/stop-app )
+[ ! -x /usr/local/bin/meteor ] && ( curl https://install.meteor.com/ | sh )

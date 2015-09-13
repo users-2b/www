@@ -1,8 +1,6 @@
 #!/bin/bash
 
-#====================== configuration start ====================
 app=$( grep APP /APP | awk -F= '{ print $2 }' )
-#====================== configuration end ======================
 
 [ ! -z $1 ] && site=$1
 

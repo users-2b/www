@@ -1,16 +1,14 @@
 #!/bin/bash
 
-#====================== configuration start ====================
-site=$( cat /APP )
-#====================== configuration end ======================
+app=$( grep APP APP | awk -F= '{ print $2 }' )
+site=$( grep SITE APP | awk -F= '{ print $2 }' )
 
 [ ! -z $1 ] && site=$1
 
 DATE=`date`
 ROOT="/home/www"
 LOG="$ROOT/log/startapp.log"
-GITHUB="https://github.com/prod-2bees/${site}.git"
-app="$ROOT/$site"
+GITHUB="$site"
 
 export NVM_DIR="$ROOT/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -26,11 +24,11 @@ PID=$(ps -ef |grep $app | awk '{ print $2 }')
   [[ "$PID" == "" ]] && echo "$DATE : Found inactive $app. Starting ..." >> $LOG
   [[ "$PID" == "" ]] && ( cd $app;./startme ) >> $LOG 2>&1 &
 
-  [ ! -d "$app" ] && echo "$DATE : Missing $app. Cloning ..." >> $LOG
-  [ ! -d "$app" ] && ( git clone $GITHUB $ROOT/$site ) >> $LOG 2>&1
+  [ ! -d "$ROOT/$app" ] && echo "$DATE : Missing $app. Cloning ..." >> $LOG
+  [ ! -d "$ROOT/$app" ] && ( git clone $GITHUB $ROOT/$app ) >> $LOG 2>&1
 
 NEWAPP=""
 echo "$DATE : checking for updates ..." >> $LOG
-  [ -d $"app" ] && ( NEWAPP=$(cd $app;git pull | grep "up-to-date") ) >> $LOG  2>&1
-  [[ "$NEWAPP" == "" ]] && ( cd $app;nvm use;./startme ) >> $LOG  2>&1 &
+  [ -d "$ROOT/$app" ] && ( NEWAPP=$(cd $ROOT/$app;git pull | grep "up-to-date") ) >> $LOG  2>&1
+  [[ "$NEWAPP" == "" ]] && ( cd $ROOT/$app;nvm use;./startme ) >> $LOG  2>&1 &
 
